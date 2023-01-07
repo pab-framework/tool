@@ -54,3 +54,27 @@ func FileExist(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil || os.IsExist(err)
 }
+
+func CopyFile(source, target string) {
+	if FileExist(source) && !FileExist(target) {
+		if sf, err := os.Open(source); err == nil {
+			defer sf.Close()
+			if tf, err := os.Create(target); err == nil {
+				tf.Close()
+				io.Copy(bufio.NewWriter(tf), bufio.NewReader(sf))
+			}
+		}
+	}
+}
+
+func Bytes2File(data []byte, target string) {
+	if FileExist(target) {
+		return
+	}
+	if tf, err := os.Create(target); err == nil {
+		defer tf.Close()
+		wf := bufio.NewWriter(tf)
+		wf.Write(data)
+		wf.Flush()
+	}
+}
