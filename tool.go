@@ -3,6 +3,8 @@ package tool
 import (
 	"bufio"
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -26,6 +28,9 @@ func Properties2Map(path string) (map[string]string, error) {
 		f   *os.File
 		b   []byte
 	)
+	if !strings.HasSuffix(path, ".properties") {
+		return nil, errors.New(fmt.Sprintf("%s is not properties", path))
+	}
 	f, err = os.Open(path)
 	if err != nil {
 		return nil, err
@@ -60,7 +65,7 @@ func CopyFile(source, target string) {
 		if sf, err := os.Open(source); err == nil {
 			defer sf.Close()
 			if tf, err := os.Create(target); err == nil {
-				tf.Close()
+				defer tf.Close()
 				io.Copy(bufio.NewWriter(tf), bufio.NewReader(sf))
 			}
 		}
