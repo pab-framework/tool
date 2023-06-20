@@ -27,6 +27,12 @@ func (gm *GoMap) Get(key interface{}) (interface{}, bool) {
 	return v, ok
 }
 
+func (gm *GoMap) Size() int {
+	gm.lock.RLock()
+	defer gm.lock.RUnlock()
+	return len(gm.data)
+}
+
 func (gm *GoMap) Exist(key interface{}) bool {
 	gm.lock.Lock()
 	defer gm.lock.Unlock()
